@@ -1,6 +1,8 @@
 import React from 'react'
 import { Form, Input, Button, Checkbox } from 'antd';
 
+import AuthService from 'services/auth'
+
 const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
@@ -11,10 +13,17 @@ const tailLayout = {
 };
 
 class Login extends React.PureComponent {
-  state = {}
+  onFinish = async values => {
+    const { username, password } = values
+    try {
+      const data = await AuthService.login({ username, password })
 
-  onFinish = values => {
-    console.log('Success:', values);
+      const { token } = data.body
+
+      localStorage.setItem('token', token)
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   onFinishFailed = errorInfo => {
