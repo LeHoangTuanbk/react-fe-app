@@ -5,7 +5,7 @@ const login = (username, password) => {
 }
 
 const me = token => {
-  return superagent.get('/me').set('Bearer ' + token)
+  return superagent.get('/me').set('Bearer', token)
 }
 
 export default { login, me }

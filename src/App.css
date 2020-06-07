@@ -39,6 +39,11 @@
   }
 }
 
+#root, .container {
+  min-width: 100vw;
+  height: 100%;
+}
+
 .login-container {
   width: 100%;
   height: 100vh;
@@ -47,4 +52,28 @@
 
 .login-container form {
   margin: auto;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.content {
+  display: flex;
+  height: calc(100% - 98px);
+  width: 100%;
+}
+
+.tabs {
+  width: 150px;
+  height: 100%;
+  background-color: #61dafb;
+}
+
+.datas {
+  width: 100%;
+  height: 100%;
+  background-color: blue;
 }
