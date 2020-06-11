@@ -55,23 +55,35 @@ export default class CreateUserModal extends React.PureComponent {
 
     try {
       const token = localStorage.getItem('token')
-      const data = await UserService.addNewUser(token, user)
 
-      if (this.formRef && this.formRef.current) {
-        this.formRef.current.resetFields()
+      const { preUserEditable, addNewUserToList, updateUser } = this.props
+      
+      let data = null
+
+      if (preUserEditable) {
+        data = await UserService.editUser(token, preUserEditable.cardId, user)
+
+        updateUser(preUserEditable, user)
       }
+      else {
+        data = await UserService.addNewUser(token, user)
 
-      this.props.addNewUserToList(data.body)
+        addNewUserToList(data.body)
+      }
 
       this.props.onFinish()
     } catch (error) {
       const errorObj = handleServerError(error.response.body.code)
-      if (this.formRef && this.formRef.current) {
+      if (errorObj && this.formRef && this.formRef.current) {
         this.formRef.current.setFields([{
           name: errorObj.field,
           errors: [errorObj.message]
         }])
+      } else {
+        // sever error
       }
+    } finally {
+      // server error
     }
 
     this.setState({ loading: false })
@@ -79,12 +91,13 @@ export default class CreateUserModal extends React.PureComponent {
 
   render() {
     const { loading } = this.state
+    const {  preUserEditable, visible, onFinish } = this.props
 
     return (
       <Modal
         title="Thêm user"
-        visible={this.props.visible}
-        onCancel={this.props.onFinish}
+        visible={visible}
+        onCancel={onFinish}
         footer={null}
       >
         <Form
@@ -92,6 +105,10 @@ export default class CreateUserModal extends React.PureComponent {
           {...formItemLayout}
           name="register"
           onFinish={this.onFinish}
+          initialValues={preUserEditable ? {
+            ...preUserEditable,
+            confirm: preUserEditable.password
+          }: undefined}
           scrollToFirstError
         >
           <Form.Item
@@ -182,7 +199,7 @@ export default class CreateUserModal extends React.PureComponent {
 
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit" loading={loading}>
-              Tạo mới
+              Lưu
             </Button>
           </Form.Item>
         </Form>

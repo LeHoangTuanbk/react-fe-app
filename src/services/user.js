@@ -8,4 +8,8 @@ const addNewUser = (token, user) => {
   return superagent.post('/user').set('Bearer', token).send(user)
 }
 
-export default { getAllUsers, addNewUser }
+const editUser = (token, cardId, user) => {
+  return superagent.put('/user/' + cardId).set('Bearer', token).send(user)
+}
+
+export default { getAllUsers, addNewUser, editUser }

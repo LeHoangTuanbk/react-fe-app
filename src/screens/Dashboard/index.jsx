@@ -14,6 +14,7 @@ export default class Dashboard extends React.PureComponent {
     loading: true,
     users: [],
     showCreateUserModal: false,
+    preUserEditable: null,
   }
 
   showModal = visiable => {
@@ -35,9 +36,18 @@ export default class Dashboard extends React.PureComponent {
     this.setState({ users: [user, ...users] })
   }
 
+  onEditUser = user => {
+    this.setState({ preUserEditable: user, showCreateUserModal: true })
+  }
+
+  updateUser = (prevUser, newUser) => {
+    const { users } = this.state
+    this.setState({ users: users.map(u => u.cardId === prevUser.cardId ? newUser : u )})
+  }
+
   render() {
     const { currentAdmin } = this.props
-    const { users, loading, showCreateUserModal} = this.state
+    const { users, loading, showCreateUserModal, preUserEditable } = this.state
 
     return (
       <div className="container">
@@ -50,14 +60,17 @@ export default class Dashboard extends React.PureComponent {
           <Tabs type="card" tabPosition="left">
             <TabPane tab="Users" key="1">
               <Button type="primary" onClick={() => this.showModal(true)}>Thêm user</Button>
-              {!loading && <User users={users} />}
+              {!loading && <User users={users} onEditUser={this.onEditUser} />}
             </TabPane>
             <TabPane tab="Activities" key="2">
               <Activity />
             </TabPane>
           </Tabs>
         </div>
-        <CreateUserModal visible={showCreateUserModal} onFinish={() => this.showModal(false)} addNewUserToList={this.addNewUserToList} />
+        {
+          showCreateUserModal && 
+          <CreateUserModal visible={true} onFinish={() => this.showModal(false)} addNewUserToList={this.addNewUserToList} preUserEditable={preUserEditable} updateUser={this.updateUser} />
+        }
       </div>
     )
   }
