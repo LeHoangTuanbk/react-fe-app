@@ -7,6 +7,9 @@ import {
   Modal
 } from 'antd';
 
+import UserService from 'services/user'
+import { handleServerError } from 'utils/sever-error-handle-mapping'
+
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -32,17 +35,51 @@ const tailFormItemLayout = {
 };
 
 export default class CreateUserModal extends React.PureComponent {
+  state = {
+    loading: false
+  }
+
+  formRef = React.createRef();
+
   showModal = () => {
     this.setState({
       visible: true,
     });
   };
 
-  onFinish = e => {
-    this.props.onFinish()
+  onFinish = async user => {
+    if (this.state.loading) {
+      return
+    }
+    this.setState({ loading: true })
+
+    try {
+      const token = localStorage.getItem('token')
+      const data = await UserService.addNewUser(token, user)
+
+      if (this.formRef && this.formRef.current) {
+        this.formRef.current.resetFields()
+      }
+
+      this.props.addNewUserToList(data.body)
+
+      this.props.onFinish()
+    } catch (error) {
+      const errorObj = handleServerError(error.response.body.code)
+      if (this.formRef && this.formRef.current) {
+        this.formRef.current.setFields([{
+          name: errorObj.field,
+          errors: [errorObj.message]
+        }])
+      }
+    }
+
+    this.setState({ loading: false })
   }
 
   render() {
+    const { loading } = this.state
+
     return (
       <Modal
         title="Thêm user"
@@ -51,6 +88,7 @@ export default class CreateUserModal extends React.PureComponent {
         footer={null}
       >
         <Form
+          ref={this.formRef}
           {...formItemLayout}
           name="register"
           onFinish={this.onFinish}
@@ -67,9 +105,19 @@ export default class CreateUserModal extends React.PureComponent {
           </Form.Item>
 
           <Form.Item
+            name="name"
+            label="Tên người dùng"
+            rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!', whitespace: false }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
             name="username"
             label="Tên tài khoản"
-            rules={[{ required: true, message: 'Vui lòng nhập tên tài khoản!', whitespace: false }]}
+            rules={[
+              { required: true, message: 'Vui lòng nhập tên tài khoản!', whitespace: false }
+            ]}
           >
             <Input />
           </Form.Item>
@@ -112,6 +160,14 @@ export default class CreateUserModal extends React.PureComponent {
           </Form.Item>
 
           <Form.Item
+            name="cardId"
+            label="Mã thẻ"
+            rules={[{ required: true, message: 'Vui lòng thêm mã thẻ!', whitespace: false }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
             name="email"
             label="E-mail"
             rules={[
@@ -125,7 +181,7 @@ export default class CreateUserModal extends React.PureComponent {
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loading}>
               Tạo mới
             </Button>
           </Form.Item>

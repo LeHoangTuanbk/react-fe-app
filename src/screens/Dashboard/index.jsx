@@ -30,6 +30,11 @@ export default class Dashboard extends React.PureComponent {
     this.setState({ users: data.body, loading: false })
   }
 
+  addNewUserToList = user => {
+    const { users } = this.state
+    this.setState({ users: [user, ...users] })
+  }
+
   render() {
     const { currentAdmin } = this.props
     const { users, loading, showCreateUserModal} = this.state
@@ -52,7 +57,7 @@ export default class Dashboard extends React.PureComponent {
             </TabPane>
           </Tabs>
         </div>
-        <CreateUserModal visible={showCreateUserModal} onFinish={() => this.showModal(false)} />
+        <CreateUserModal visible={showCreateUserModal} onFinish={() => this.showModal(false)} addNewUserToList={this.addNewUserToList} />
       </div>
     )
   }
