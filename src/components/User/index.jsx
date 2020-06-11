@@ -1,8 +1,23 @@
 import React from 'react'
 import { Table, Space } from 'antd'
 
+import UserService from 'services/user'
+
 export default class User extends React.PureComponent {
   state = {}
+
+  removeUser = async user => {
+    console.log(user);
+    try {
+      if(window.confirm('Bạn chắc chắn muốn xóa user này?')) {
+        const token = localStorage.getItem('token')
+        await UserService.deleteUser(token, user.cardId)
+        this.props.onRemoveUser(user)
+      }
+    } catch (error) {
+      // handle error later
+    }
+  }
 
   render() {
     const { users } = this.props
@@ -34,7 +49,7 @@ export default class User extends React.PureComponent {
           <Space size="middle">
             <span>Xem activity</span>
             <span onClick={() => this.props.onEditUser(record)}>Sửa user</span>
-            <span>Xóa user</span>
+            <span onClick={() => this.removeUser(record)}>Xóa user</span>
           </Space>
         )
       }

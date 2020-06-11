@@ -45,6 +45,11 @@ export default class Dashboard extends React.PureComponent {
     this.setState({ users: users.map(u => u.cardId === prevUser.cardId ? newUser : u )})
   }
 
+  handleRemoveUser = user => {
+    const { users } = this.state
+    this.setState({ users: users.filter(u => u.cardId !== user.cardId )})
+  }
+
   render() {
     const { currentAdmin } = this.props
     const { users, loading, showCreateUserModal, preUserEditable } = this.state
@@ -60,7 +65,7 @@ export default class Dashboard extends React.PureComponent {
           <Tabs type="card" tabPosition="left">
             <TabPane tab="Users" key="1">
               <Button type="primary" onClick={() => this.showModal(true)}>Thêm user</Button>
-              {!loading && <User users={users} onEditUser={this.onEditUser} />}
+              {!loading && <User users={users} onEditUser={this.onEditUser} onRemoveUser={this.handleRemoveUser} />}
             </TabPane>
             <TabPane tab="Activities" key="2">
               <Activity />

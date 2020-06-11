@@ -12,4 +12,8 @@ const editUser = (token, cardId, user) => {
   return superagent.put('/user/' + cardId).set('Bearer', token).send(user)
 }
 
-export default { getAllUsers, addNewUser, editUser }
+const deleteUser = (token, cardId) => {
+  return superagent.delete('/user/' + cardId).set('Bearer', token)
+}
+
+export default { getAllUsers, addNewUser, editUser, deleteUser }
