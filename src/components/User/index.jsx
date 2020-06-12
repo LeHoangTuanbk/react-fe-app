@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Space } from 'antd'
+import { Table, Space, Spin } from 'antd'
 
 export default class User extends React.PureComponent {
   state = {}
@@ -32,8 +32,8 @@ export default class User extends React.PureComponent {
         key: 'action',
         render: (text, record) => (
           <Space size="middle">
-            <a href="#">Xem activity</a>
-            <a href="#">Xóa user</a>
+            <Spin />
+            <Spin />
           </Space>
         )
       }
