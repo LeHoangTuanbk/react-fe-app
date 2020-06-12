@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Space } from 'antd'
+import { Table, Space, Spin } from 'antd'
 
 import UserService from 'services/user'
 

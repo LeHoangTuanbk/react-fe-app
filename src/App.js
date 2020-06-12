@@ -49,7 +49,11 @@ export default class App extends React.PureComponent {
     }
 
     return (
-      <Router>
+      <div>
+        <div className="header" >
+          <h1 style={{textAlign: 'right', width: '62%'}}>Website quản lí mở cửa nhà</h1>
+        </div>
+        <Router>
         <Switch>
           <Route path="/" exact>
             <Home isAdmin={isAdmin} setIsAdmin={() => this.setState({ isAdmin: true })} />
@@ -57,6 +61,10 @@ export default class App extends React.PureComponent {
           <PrivateRoute component={Dashboard} isAdmin={isAdmin} logout={this.logout} currentAdmin={currentAdmin} />
         </Switch>
       </Router>
+      <div className="footer" style={{ position: "absolute", bottom: 20, left: "50%", transform: "translate(-50%, 0)", fontSize: "20px" }}>
+        DATN20192 - Lê Hoàng Tuấn 20154089
+      </div>
+      </div>
     )
   }
 }
