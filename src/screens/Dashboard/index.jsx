@@ -60,11 +60,6 @@ export default class Dashboard extends React.PureComponent {
     var cardID = "13c6c61b";
     return (
       <div className="container">
-        <div className="navbar">
-          <p></p>
-          <p onClick={this.props.logout} style={{ cursor: "pointer", color: "red" }}>Đăng xuất</p>
-        </div>
-
         <div className="card-container">
           <Tabs type="card" tabPosition="left">
             <TabPane tab="Users" key="1">

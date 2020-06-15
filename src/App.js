@@ -50,20 +50,29 @@ export default class App extends React.PureComponent {
 
     return (
       <div>
-        <div className="header" >
-          <h1 style={{textAlign: 'right', width: '62%'}}>Website quản lí mở cửa nhà</h1>
+        <div className="container">
+          <div className="header" >
+            <div></div>
+            <h1>Website quản lí mở cửa nhà</h1>
+            {
+              isAdmin ? (          
+                <p onClick={this.logout} style={{ cursor: "pointer", color: "red" }}>Đăng xuất</p>
+              ): <div></div>
+            }
+          </div>
+          <Router>
+            <Switch>
+              <Route path="/" exact>
+                <Home isAdmin={isAdmin} setIsAdmin={() => this.setState({ isAdmin: true })} />
+              </Route>
+              <PrivateRoute path="/dashboard" component={Dashboard} isAdmin={isAdmin} logout={this.logout} currentAdmin={currentAdmin} />
+            </Switch>
+          </Router>
         </div>
-        <Router>
-        <Switch>
-          <Route path="/" exact>
-            <Home isAdmin={isAdmin} setIsAdmin={() => this.setState({ isAdmin: true })} />
-          </Route>
-          <PrivateRoute component={Dashboard} isAdmin={isAdmin} logout={this.logout} currentAdmin={currentAdmin} />
-        </Switch>
-      </Router>
-      <div className="footer" style={{ position: "absolute", bottom: 20, left: "50%", transform: "translate(-50%, 0)", fontSize: "20px" }}>
-        DATN20192 - Lê Hoàng Tuấn 20154089
-      </div>
+        
+        <div className="footer" style={{ height: '40px', textAlign: 'center' }}>
+          DATN20192 - Lê Hoàng Tuấn 20154089
+        </div>
       </div>
     )
   }

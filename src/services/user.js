@@ -15,5 +15,5 @@ const editUser = (token, cardId, user) => {
 const deleteUser = (token, cardId) => {
   return superagent.delete('/user/' + cardId).set('Bearer', token)
 }
-
+  
 export default { getAllUsers, addNewUser, editUser, deleteUser }

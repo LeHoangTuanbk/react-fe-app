@@ -97,10 +97,16 @@ export default class CreateUserModal extends React.PureComponent {
       <Modal
         title="Thêm user"
         visible={visible}
-        onCancel={onFinish}
+        onCancel={() => {
+          if(this.formRef.current) {
+            this.formRef.current.resetFields()
+          }
+          onFinish()
+        }}
         footer={null}
       >
         <Form
+        
           ref={this.formRef}
           {...formItemLayout}
           name="register"
