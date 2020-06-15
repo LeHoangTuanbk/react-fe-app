@@ -50,6 +50,10 @@ export default class Dashboard extends React.PureComponent {
     this.setState({ users: users.filter(u => u.cardId !== user.cardId )})
   }
 
+  clearForm = () => {
+    this.setState({ preUserEditable: null, showCreateUserModal: false })
+  }
+
   render() {
     const { currentAdmin } = this.props
     const { users, loading, showCreateUserModal, preUserEditable } = this.state
@@ -74,7 +78,7 @@ export default class Dashboard extends React.PureComponent {
         </div>
         {
           showCreateUserModal && 
-          <CreateUserModal visible={true} onFinish={() => this.showModal(false)} addNewUserToList={this.addNewUserToList} preUserEditable={preUserEditable} updateUser={this.updateUser} />
+          <CreateUserModal visible={true} onFinish={() => this.showModal(false)} addNewUserToList={this.addNewUserToList} preUserEditable={preUserEditable} updateUser={this.updateUser} clearForm={this.clearForm} />
         }
       </div>
     )

@@ -48,6 +48,13 @@ class CreateUserModal extends React.PureComponent {
     });
   };
 
+  componentWillUnmount = () => {
+    if (this.formRef.current) {
+      this.formRef.current.resetFields()
+      this.props.clearForm()
+    }
+  }
+
   onFinish = async user => {
     if (this.state.loading) {
       return
