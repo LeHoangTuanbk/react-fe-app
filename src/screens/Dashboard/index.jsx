@@ -65,7 +65,7 @@ export default class Dashboard extends React.PureComponent {
           <Tabs type="card" tabPosition="left">
             <TabPane tab="Users" key="1">
               <Button type="primary" onClick={() => this.showModal(true)}>Thêm user</Button>
-              {!loading && <User users={users} onEditUser={this.onEditUser} onRemoveUser={this.handleRemoveUser} />}
+              {!loading && <User users={users} onEditUser={this.onEditUser} onRemoveUser={this.handleRemoveUser} currentAdmin={currentAdmin} />}
             </TabPane>
             <TabPane tab="Activities" key="2">
               <Activity />

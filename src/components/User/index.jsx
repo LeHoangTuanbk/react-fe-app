@@ -7,11 +7,15 @@ export default class User extends React.PureComponent {
   state = {}
 
   removeUser = async user => {
-    console.log(user);
     try {
-      if(window.confirm('Bạn chắc chắn muốn xóa user này?')) {
-        const token = localStorage.getItem('token')
-        await UserService.deleteUser(token, user.cardId)
+      if(window.confirm('Bạn chắc chắn muốn xóa user này? Xóa user này cũng sẽ xóa mọi activity của họ.')) {
+        const { currentAdmin } = this.props
+        if (currentAdmin.cardId === user.cardId) {
+          window.alert('Bạn không thể xóa chính bản thân bạn!')
+          return;
+        }
+
+        await UserService.deactiveUser(user.cardId)
         this.props.onRemoveUser(user)
       }
     } catch (error) {

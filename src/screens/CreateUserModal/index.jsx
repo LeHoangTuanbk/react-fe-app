@@ -6,6 +6,7 @@ import {
   Button,
   Modal
 } from 'antd';
+import { withRouter } from 'react-router-dom'
 
 import UserService from 'services/user'
 import { handleServerError } from 'utils/sever-error-handle-mapping'
@@ -34,7 +35,7 @@ const tailFormItemLayout = {
   },
 };
 
-export default class CreateUserModal extends React.PureComponent {
+class CreateUserModal extends React.PureComponent {
   state = {
     loading: false
   }
@@ -56,14 +57,16 @@ export default class CreateUserModal extends React.PureComponent {
     try {
       const token = localStorage.getItem('token')
 
-      const { preUserEditable, addNewUserToList, updateUser } = this.props
+      const { preUserEditable, addNewUserToList, history } = this.props
       
       let data = null
 
       if (preUserEditable) {
-        data = await UserService.editUser(token, preUserEditable.cardId, user)
-
-        updateUser(preUserEditable, user)
+        if (window.confirm('Ban sẽ được đăng xuất sau khi thực hiện hành động này!')) {
+          data = await UserService.editUser(token, preUserEditable.cardId, user)
+          localStorage.clear()
+          history.push('/')
+        }
       }
       else {
         data = await UserService.addNewUser(token, user)
@@ -207,3 +210,5 @@ export default class CreateUserModal extends React.PureComponent {
     )
   }
 }
+
+export default withRouter(CreateUserModal)
