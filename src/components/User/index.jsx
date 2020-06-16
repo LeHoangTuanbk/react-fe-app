@@ -51,7 +51,7 @@ export default class User extends React.PureComponent {
         key: 'action',
         render: (text, record) => (
           <Space size="middle">
-            <span>Xem activity</span>
+            <span onClick={() => this.props.setTargetActivityUser(record.cardId)}>Xem activity</span>
             <span onClick={() => this.props.onEditUser(record)}>Sửa user</span>
             <span onClick={() => this.removeUser(record)}>Xóa user</span>
           </Space>
