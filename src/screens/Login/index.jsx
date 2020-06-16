@@ -51,9 +51,9 @@ class Login extends React.PureComponent {
         onFinishFailed={this.onFinishFailed}
       >
         <Form.Item
-          label="Tên đăng nhập"
+          label="Tên tài khoản"
           name="username"
-          rules={[{ required: true, message: 'Vui lòng điền email' }]}
+          rules={[{ required: true, message: 'Vui lòng điền tên đăng nhập' }]}
         >
           <Input />
         </Form.Item>
@@ -61,7 +61,7 @@ class Login extends React.PureComponent {
         <Form.Item
           label="Mật khẩu"
           name="password"
-          rules={[{ required: true, message: 'Vui lòng điền password' }]}
+          rules={[{ required: true, message: 'Vui lòng điền mật khẩu' }]}
         >
           <Input.Password />
         </Form.Item>
@@ -76,7 +76,7 @@ class Login extends React.PureComponent {
 
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit" loading={this.state.loading}>
-            Submit
+            Đăng nhập 
           </Button>
         </Form.Item>
       </Form>

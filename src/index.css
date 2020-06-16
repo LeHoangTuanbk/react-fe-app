@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.ant-form.ant-form-horizontal {
+  width: 400px;
+  border: 0.2px solid rgba(0, 0, 0, 0.05);
+  padding: 20px 20px 0px 10px;
+  box-shadow: 0px 6px 5px 0px rgba(232,220,232,1);
+}
