@@ -105,7 +105,7 @@ class CreateUserModal extends React.PureComponent {
 
     return (
       <Modal
-        title="Thêm user"
+        title={preUserEditable ? "Sửa user" : "Thêm user"}
         visible={visible}
         onCancel={() => {
           if(this.formRef.current) {

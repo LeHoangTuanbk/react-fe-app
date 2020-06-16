@@ -8,6 +8,7 @@ import User from 'components/User';
 import Activity from 'components/Activity';
 import CreateUserModal from 'screens/CreateUserModal';
 import SingleUserActivity from 'screens/SingleUserActivity';
+import OpenDoorModal from 'screens/OpenDoorModal';
 
 const { TabPane } = Tabs;
 
@@ -20,6 +21,7 @@ export default class Dashboard extends React.PureComponent {
     preUserEditable: null,
     showSingleActivityModal: false,
     activityUser: [],
+    openDoorModal: false
   }
 
   showModal = visiable => {
@@ -33,7 +35,7 @@ export default class Dashboard extends React.PureComponent {
     const token = localStorage.getItem('token')
 
     const data = await UserService.getAllUsers(token)
-    const activityData  = await ActivityService.getAllActivity()
+    const activityData = await ActivityService.getAllActivity()
     this.setState({ users: data.body, loading: false, activities: activityData.body })
   }
 
@@ -48,12 +50,12 @@ export default class Dashboard extends React.PureComponent {
 
   updateUser = (prevUser, newUser) => {
     const { users } = this.state
-    this.setState({ users: users.map(u => u.cardId === prevUser.cardId ? newUser : u )})
+    this.setState({ users: users.map(u => u.cardId === prevUser.cardId ? newUser : u) })
   }
 
   handleRemoveUser = user => {
     const { users } = this.state
-    this.setState({ users: users.filter(u => u.cardId !== user.cardId )})
+    this.setState({ users: users.filter(u => u.cardId !== user.cardId) })
   }
 
   clearForm = () => {
@@ -61,13 +63,17 @@ export default class Dashboard extends React.PureComponent {
   }
 
   showActivityUser = async cardId => {
-    const activityData  = await ActivityService.getUserActivity(cardId)
+    const activityData = await ActivityService.getUserActivity(cardId)
     this.setState({ showSingleActivityModal: true, activityUser: activityData.body })
+  }
+
+  setOpenDoor = openDoorModal => {
+    this.setState({ openDoorModal })
   }
 
   render() {
     const { currentAdmin } = this.props
-    const { users, loading, showCreateUserModal, preUserEditable, activities, showSingleActivityModal, activityUser } = this.state
+    const { users, loading, showCreateUserModal, preUserEditable, activities, showSingleActivityModal, activityUser, visiable, openDoorModal } = this.state
 
     var cardID = "13c6c61b";
     return (
@@ -81,50 +87,13 @@ export default class Dashboard extends React.PureComponent {
             <TabPane tab="Nhật kí mở cửa" key="2">
               <Activity activities={activities.map(v => ({ ...v, cardId: v.User.cardId, username: v.User.username }))} />
             </TabPane>
-            <TabPane tab="Lấy mã thẻ" key="3" >
-              <div onClick={() => {
-                setTimeout(() => {
-                  this.setState({
-                    cardAvai : true
-                  })
-                }, 10000); 
-            }}>
-                <Button type="primary" onClick={this.showModal}>
-                  Nhấn vào để lấy mã thẻ
-                </Button>
-                <Modal
-                  title="Hãy ra cửa quẹt thẻ để có thể lấy được mã thẻ"
-                  visible={this.state.visible}
-                  onOk={this.handleOk}
-                  onCancel={this.handleCancel}
-                > { this.state.cardAvai === true && 
-                  <p>{cardID}</p>
-                }
-
-                </Modal>
-              </div>
-            </TabPane>
-            <TabPane tab="Mở khóa cửa nhà từ website" key="4" >
-              <div>
-                <Button type="primary" onClick={this.showModal}>
-                  Mở khóa cửa nhà
-                </Button>
-                <Modal
-                  title="Cửa đã được mở"
-                  visible={this.state.visible}
-                  onOk={this.handleOk}
-                  onCancel={this.handleCancel}
-                > { this.state.cardAvai === true && 
-                  <p>{cardID}</p>
-                }
-
-                </Modal>
-              </div>
+            <TabPane tab="Mở khóa cửa nhà từ website" key="3" >
+              <OpenDoorModal openDoorModal={openDoorModal} setOpenDoor={this.setOpenDoor} />
             </TabPane>
           </Tabs>
         </div>
         {
-          showCreateUserModal && 
+          showCreateUserModal &&
           <CreateUserModal visible={true} onFinish={() => this.showModal(false)} addNewUserToList={this.addNewUserToList} preUserEditable={preUserEditable} updateUser={this.updateUser} clearForm={this.clearForm} />
         }
         {
