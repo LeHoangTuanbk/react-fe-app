@@ -69,11 +69,12 @@ class CreateUserModal extends React.PureComponent {
       let data = null
 
       if (preUserEditable) {
-        if (window.confirm('Ban sẽ được đăng xuất sau khi thực hiện hành động này!')) {
-          data = await UserService.editUser(token, preUserEditable.cardId, user)
-          localStorage.clear()
-          history.push('/')
-        }
+        data = await UserService.editUser(token, preUserEditable.cardId, user)
+        // if (window.confirm('Ban sẽ được đăng xuất sau khi thực hiện hành động này!')) {
+        //   data = await UserService.editUser(token, preUserEditable.cardId, user)
+        //   localStorage.clear()
+        //   history.push('/')
+        // }
       }
       else {
         data = await UserService.addNewUser(token, user)

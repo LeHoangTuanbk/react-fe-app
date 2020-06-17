@@ -3,6 +3,8 @@ import { Tabs, Modal, Button } from 'antd';
 
 import UserService from 'services/user'
 import ActivityService from 'services/activity'
+import openDoorService from 'services/openDoor'
+
 
 import User from 'components/User';
 import Activity from 'components/Activity';
@@ -67,7 +69,12 @@ export default class Dashboard extends React.PureComponent {
     this.setState({ showSingleActivityModal: true, activityUser: activityData.body })
   }
 
-  setOpenDoor = openDoorModal => {
+  setOpenDoor = async openDoorModal => {
+    if (openDoorModal) {
+      const { currentAdmin } = this.props
+      await openDoorService(currentAdmin.cardId); 
+    }
+    
     this.setState({ openDoorModal })
   }
 
@@ -75,7 +82,6 @@ export default class Dashboard extends React.PureComponent {
     const { currentAdmin } = this.props
     const { users, loading, showCreateUserModal, preUserEditable, activities, showSingleActivityModal, activityUser, visiable, openDoorModal } = this.state
 
-    var cardID = "13c6c61b";
     return (
       <div className="container">
         <div className="card-container">

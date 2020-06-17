@@ -9,12 +9,14 @@ const OpenDoorModal = ({ openDoorModal, setOpenDoor }) => {
         Mở khóa cửa nhà
       </Button>
       <Modal
-        title="Cửa đã được mở"
+        title="Mở cửa từ website"
         visible={openDoorModal}
         onOk={() => setOpenDoor(false)}
-        onCancel={() => setOpenDoor(false)}
+        onCancel={() => setOpenDoor(false)
+        
+        }
       >
-        ...content
+        Cửa đã được mở
       </Modal>
     </div>
   )
