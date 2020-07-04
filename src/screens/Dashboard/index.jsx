@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tabs, Modal, Button } from 'antd';
+import { Tabs, Button } from 'antd';
 
 import UserService from 'services/user'
 import ActivityService from 'services/activity'
@@ -88,7 +88,7 @@ export default class Dashboard extends React.PureComponent {
 
   render() {
     const { currentAdmin } = this.props
-    const { users, loading, showCreateUserModal, preUserEditable, activities, showSingleActivityModal, activityUser, visiable, openDoorModal } = this.state
+    const { users, loading, showCreateUserModal, preUserEditable, activities, showSingleActivityModal, activityUser, openDoorModal } = this.state
 
     return (
       <div className="container">
@@ -108,7 +108,7 @@ export default class Dashboard extends React.PureComponent {
         </div>
         {
           showCreateUserModal &&
-          <CreateUserModal visible={true} onFinish={() => this.showModal(false)} addNewUserToList={this.addNewUserToList} preUserEditable={preUserEditable} updateUser={this.updateUser} clearForm={this.clearForm} />
+          <CreateUserModal visible={true} currentAdmin={currentAdmin} onFinish={() => this.showModal(false)} addNewUserToList={this.addNewUserToList} preUserEditable={preUserEditable} updateUser={this.updateUser} clearForm={this.clearForm} />
         }
         {
           <SingleUserActivity visiable={showSingleActivityModal} onFinish={() => this.setState({ showSingleActivityModal: false })} activities={activityUser.activities && activityUser.activities.map(v => ({ ...v, cardId: activityUser.cardId, username: activityUser.username }))} />

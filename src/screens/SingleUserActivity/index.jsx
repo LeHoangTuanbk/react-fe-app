@@ -9,8 +9,6 @@ export default class SingleUserActivity extends React.PureComponent {
   render() {
     const { visiable, onFinish, activities } = this.props
 
-    console.log(visiable);
-
     return (
       <Modal
         title={activities && activities[0].username}

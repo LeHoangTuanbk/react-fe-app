@@ -63,17 +63,22 @@ class CreateUserModal extends React.PureComponent {
     try {
       const token = localStorage.getItem('token')
 
-      const { preUserEditable, addNewUserToList, history } = this.props
+      const { preUserEditable, addNewUserToList, currentAdmin, updateUser, history } = this.props
       
       let data = null
 
       if (preUserEditable) {
-        data = await UserService.editUser(token, preUserEditable.cardId, user)
-        // if (window.confirm('Ban sẽ được đăng xuất sau khi thực hiện hành động này!')) {
-        //   data = await UserService.editUser(token, preUserEditable.cardId, user)
-        //   localStorage.clear()
-        //   history.push('/')
-        // }
+        if(currentAdmin.cardId === preUserEditable.cardId) {
+          if (window.confirm('Ban sẽ được đăng xuất sau khi thực hiện hành động này!')) {
+            data = await UserService.editUser(token, preUserEditable.cardId, user)
+            localStorage.clear()
+            history.push('/')
+          }
+        } 
+        else {
+          data = await UserService.editUser(token, preUserEditable.cardId, user)
+          updateUser(preUserEditable, data.body)
+        }
       }
       else {
         data = await UserService.addNewUser(token, user)
@@ -83,7 +88,7 @@ class CreateUserModal extends React.PureComponent {
 
       this.props.onFinish()
     } catch (error) {
-      const errorObj = handleServerError(error.response.body.code)
+      const errorObj = handleServerError(error && error.response && error.response.body.code | undefined)
       if (errorObj && this.formRef && this.formRef.current) {
         this.formRef.current.setFields([{
           name: errorObj.field,
@@ -195,9 +200,9 @@ class CreateUserModal extends React.PureComponent {
           <Form.Item
             name="cardId"
             label="Mã thẻ"
-            rules={[{ required: true, message: 'Vui lòng thêm mã thẻ!', whitespace: false }]}
+            rules={[{ required: true, message: 'Vui lòng thêm mã thẻ!', whitespace: false}]}
           >
-            <Input />
+            <Input disabled={preUserEditable} />
           </Form.Item>
 
           <Form.Item
