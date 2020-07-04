@@ -32,7 +32,7 @@ export default class User extends React.PureComponent {
         key: 'cardId',
       },
       {
-        title: 'Tên',
+        title: 'Tên người dùng',
         dataIndex: 'name',
         key: 'name',
       },

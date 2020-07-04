@@ -11,6 +11,7 @@ import Activity from 'components/Activity';
 import CreateUserModal from 'screens/CreateUserModal';
 import SingleUserActivity from 'screens/SingleUserActivity';
 import OpenDoorModal from 'screens/OpenDoorModal';
+import user from 'services/user';
 
 const { TabPane } = Tabs;
 
@@ -23,7 +24,8 @@ export default class Dashboard extends React.PureComponent {
     preUserEditable: null,
     showSingleActivityModal: false,
     activityUser: [],
-    openDoorModal: false
+    openDoorModal: false,
+    findUsers: []
   }
 
   showModal = visiable => {
@@ -38,7 +40,7 @@ export default class Dashboard extends React.PureComponent {
 
     const data = await UserService.getAllUsers(token)
     const activityData = await ActivityService.getAllActivity()
-    this.setState({ users: data.body, loading: false, activities: activityData.body })
+    this.setState({ users: data.body,findUsers: data.body, loading: false, activities: activityData.body })
   }
 
   addNewUserToList = user => {
@@ -86,6 +88,46 @@ export default class Dashboard extends React.PureComponent {
     this.setState({ openDoorModal })
   }
 
+  handleSearch = async( user ) => {
+    //console.log(this.refs.search.value);
+    const { users } = this.state
+    if (users.filter(u => u.cardId == this.refs.search.value).length > 0){
+      this.setState({ users: users.filter(u => u.cardId == this.refs.search.value) })
+    }
+    else 
+    {
+      this.setState({ users: users.filter(u => u.name == this.refs.search.value) })
+    }
+    // if (this.refs.search.value == '')
+    // {
+    //   const token = localStorage.getItem('token')
+    //   const data = await UserService.getAllUsers(token)
+    //   this.setState({ users: data.body, loading: false })
+    //   //console.log(data)
+    // }
+    // else 
+    // {
+    //   //console.log(users)
+    //   if (users.filter(u => u.cardId == this.refs.search.value).length > 0){
+    //     this.setState({ users: users.filter(u => u.cardId == this.refs.search.value) })
+    //   }
+    //   else 
+    //   {
+    //     this.setState({ users: users.filter(u => u.name == this.refs.search.value) })
+    //   }
+    //   //if (users.filter(u => u.name == this.refs.search.value).length > 0)
+    // }
+  }
+  handleChangeSearch = async(event) => {
+    //console.log(event.target.value)
+    const SearchValue = event.target.value
+    if (SearchValue == '')
+    {
+      const token = localStorage.getItem('token')
+      const data = await UserService.getAllUsers(token)
+      this.setState({ users: data.body, loading: false })
+    }
+  }
   render() {
     const { currentAdmin } = this.props
     const { users, loading, showCreateUserModal, preUserEditable, activities, showSingleActivityModal, activityUser, openDoorModal } = this.state
@@ -96,6 +138,10 @@ export default class Dashboard extends React.PureComponent {
           <Tabs type="card" tabPosition="left">
             <TabPane tab="Users" key="1">
               <Button type="primary" onClick={() => this.showModal(true)}>Thêm user</Button>
+              <input  onChange={this.handleChangeSearch} type="text" className="search" ref="search" placeholder="Tìm theo mã thẻ hoặc tên người dùng" style={{ width: "400px", marginLeft: '2.8rem', marginRight: '0.2rem' }} />
+              <span className="input-group-btn"> 
+              <button onClick={this.handleSearch}  className="btn btn-info" type="button">Search</button>
+          </span>
               {!loading && <User users={users} onEditUser={this.onEditUser} onRemoveUser={this.handleRemoveUser} currentAdmin={currentAdmin} setTargetActivityUser={this.showActivityUser} />}
             </TabPane>
             <TabPane tab="Nhật kí mở cửa" key="2">
