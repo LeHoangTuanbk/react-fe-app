@@ -60,7 +60,6 @@ class CreateUserModal extends React.PureComponent {
       return
     }
     this.setState({ loading: true })
-
     try {
       const token = localStorage.getItem('token')
 

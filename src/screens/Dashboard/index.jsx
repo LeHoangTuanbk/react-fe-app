@@ -46,8 +46,16 @@ export default class Dashboard extends React.PureComponent {
     this.setState({ users: [user, ...users] })
   }
 
-  onEditUser = user => {
+  onEditUser = async (user) => {
+    //const { users } = this.state
+    //this.setState({ users: users.map(u => u.cardId === prevUser.cardId ? newUser : u) })
+    
+    // const token = localStorage.getItem('token')
+    // const data = await UserService.getAllUsers(token)
+    // const activityData = await ActivityService.getAllActivity()
+    // this.setState({ users: data.body, activities: activityData.body })
     this.setState({ preUserEditable: user, showCreateUserModal: true })
+    //this.setState({ loading: true })
   }
 
   updateUser = (prevUser, newUser) => {
