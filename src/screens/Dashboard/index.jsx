@@ -8,6 +8,7 @@ import openDoorService from 'services/openDoor'
 
 import User from 'components/User';
 import Activity from 'components/Activity';
+import DateRangeChoose from 'components/DateRangeChoose';
 import CreateUserModal from 'screens/CreateUserModal';
 import SingleUserActivity from 'screens/SingleUserActivity';
 import OpenDoorModal from 'screens/OpenDoorModal';
@@ -91,12 +92,12 @@ export default class Dashboard extends React.PureComponent {
   handleSearch = async( user ) => {
     //console.log(this.refs.search.value);
     const { users } = this.state
-    if (users.filter(u => u.cardId == this.refs.search.value).length > 0){
-      this.setState({ users: users.filter(u => u.cardId == this.refs.search.value) })
+    if (users.filter(u => u.cardId === this.refs.search.value).length > 0){
+      this.setState({ users: users.filter(u => u.cardId === this.refs.search.value) })
     }
     else 
     {
-      this.setState({ users: users.filter(u => u.name == this.refs.search.value) })
+      this.setState({ users: users.filter(u => u.name === this.refs.search.value) })
     }
     // if (this.refs.search.value == '')
     // {
@@ -121,7 +122,7 @@ export default class Dashboard extends React.PureComponent {
   handleChangeSearch = async(event) => {
     //console.log(event.target.value)
     const SearchValue = event.target.value
-    if (SearchValue == '')
+    if (SearchValue === '')
     {
       const token = localStorage.getItem('token')
       const data = await UserService.getAllUsers(token)
@@ -138,13 +139,14 @@ export default class Dashboard extends React.PureComponent {
           <Tabs type="card" tabPosition="left">
             <TabPane tab="Users" key="1">
               <Button type="primary" onClick={() => this.showModal(true)}>Thêm user</Button>
-              <input  onChange={this.handleChangeSearch} type="text" className="search" ref="search" placeholder="Tìm theo mã thẻ hoặc tên người dùng" style={{ width: "400px", marginLeft: '2.8rem', marginRight: '0.2rem' }} />
+              <input  onChange={this.handleChangeSearch} type="text" className="search" ref="search" placeholder="Tìm theo Card ID hoặc tên người dùng" style={{ width: "400px", marginLeft: '2.8rem', marginRight: '0.2rem' }} />
               <span className="input-group-btn"> 
               <button onClick={this.handleSearch}  className="btn btn-info" type="button">Search</button>
           </span>
               {!loading && <User users={users} onEditUser={this.onEditUser} onRemoveUser={this.handleRemoveUser} currentAdmin={currentAdmin} setTargetActivityUser={this.showActivityUser} />}
             </TabPane>
             <TabPane tab="Nhật kí mở cửa" key="2">
+              <DateRangeChoose activities = {activities}/>
               <Activity activities={activities.map(v => ({ ...v, cardId: v.User.cardId, username: v.User.username }))} />
             </TabPane>
             <TabPane tab="Mở khóa cửa nhà từ website" key="3" >
