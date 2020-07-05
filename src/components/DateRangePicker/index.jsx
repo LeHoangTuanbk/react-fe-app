@@ -6,6 +6,9 @@ export default class DateRangePicker extends Component {
     const { startDate, endDate, handlePickDate, onResetDateRange } = this.props
     return (
       <div style={{ display: 'flex' }}>
+        <div style={{ marginRight: '1.2rem', color: 'red' }}>
+          Chọn khoảng thời gian cần xem nhật kí mở cửa
+        </div>
         <DatePicker
           selected={startDate}
           onChange={date => handlePickDate(date, null)}
@@ -24,7 +27,7 @@ export default class DateRangePicker extends Component {
           minDate={startDate}
         />
         <span className="input-group-btn"> 
-            <button onClick={onResetDateRange} className="btn btn-info" type="button" style={{ marginRight: '2.2rem' }}>Reset</button>
+            <button onClick={onResetDateRange} className="btn btn-info" type="button" style={{ marginLeft: '2.2rem' }}>Reset</button>
         </span>
       </div>
     );
