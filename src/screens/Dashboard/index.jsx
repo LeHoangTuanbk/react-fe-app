@@ -107,7 +107,7 @@ export default class Dashboard extends React.PureComponent {
     if (!value) {
       this.setState({ filteringUsers: users })
     } else {
-      this.setState({ filteringUsers: users.filter(u => u.username.toLowerCase().indexOf(value.toLowerCase()) !== -1) })
+      this.setState({ filteringUsers: users.filter(u => (u.cardId.toLowerCase().indexOf(value.toLowerCase()) !== -1) || (u.username.toLowerCase().indexOf(value.toLowerCase()) !== -1)) })
     }
   }
 
@@ -150,7 +150,7 @@ export default class Dashboard extends React.PureComponent {
           <Tabs type="card" tabPosition="left">
             <TabPane tab="Users" key="1">
               <Button type="primary" onClick={() => this.showModal(true)}>Thêm user</Button>
-              <Input onChange={this.handleChangeSearch} type="text" className="search" ref="search" placeholder="Tìm theo tên người dùng" style={{ width: 400, marginLeft: '2.8rem', marginRight: '0.2rem' }} />
+              <Input onChange={this.handleChangeSearch} type="text" className="search" ref="search" placeholder="Tìm theo Card ID hoặc tên người dùng" style={{ width: 400, marginLeft: '2.8rem', marginRight: '0.2rem' }} />
               {!loading && <User users={filteringUsers} onEditUser={this.onEditUser} onRemoveUser={this.handleRemoveUser} currentAdmin={currentAdmin} setTargetActivityUser={this.showActivityUser} />}
             </TabPane>
             <TabPane tab="Nhật kí mở cửa" key="2">
