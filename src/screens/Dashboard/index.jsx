@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tabs, Button } from 'antd';
+import { Tabs, Button, Input } from 'antd';
 import moment from 'moment';
 
 import UserService from 'services/user'
@@ -30,10 +30,10 @@ export default class Dashboard extends React.PureComponent {
     showSingleActivityModal: false,
     activityUser: [],
     openDoorModal: false,
-    findUsers: [],
     startDate: null,
     endDate: null,
-    filteringActivities: []
+    filteringActivities: [],
+    filteringUsers: []
   }
 
   showModal = visiable => {
@@ -48,18 +48,18 @@ export default class Dashboard extends React.PureComponent {
 
     const data = await UserService.getAllUsers(token)
     const activityData = await ActivityService.getAllActivity()
-    this.setState({ users: data.body,findUsers: data.body, loading: false, activities: activityData.body, filteringActivities: activityData.body })
+    this.setState({ users: data.body, filteringUsers: data.body, loading: false, activities: activityData.body, filteringActivities: activityData.body })
   }
 
   addNewUserToList = user => {
     const { users } = this.state
-    this.setState({ users: [user, ...users] })
+    this.updateGllobalUsers([user, ...users])
   }
 
   onEditUser = async (user) => {
     //const { users } = this.state
     //this.setState({ users: users.map(u => u.cardId === prevUser.cardId ? newUser : u) })
-    
+
     // const token = localStorage.getItem('token')
     // const data = await UserService.getAllUsers(token)
     // const activityData = await ActivityService.getAllActivity()
@@ -70,16 +70,20 @@ export default class Dashboard extends React.PureComponent {
 
   updateUser = (prevUser, newUser) => {
     const { users } = this.state
-    this.setState({ users: users.map(u => u.cardId === prevUser.cardId ? newUser : u) })
+    this.updateGllobalUsers(users.map(u => u.cardId === prevUser.cardId ? newUser : u))
   }
 
   handleRemoveUser = user => {
     const { users } = this.state
-    this.setState({ users: users.filter(u => u.cardId !== user.cardId) })
+    this.updateGllobalUsers(users.filter(u => u.cardId !== user.cardId))
   }
 
   clearForm = () => {
     this.setState({ preUserEditable: null, showCreateUserModal: false })
+  }
+
+  updateGllobalUsers = users => {
+    this.setState({ users, filteringUsers: users })
   }
 
   showActivityUser = async cardId => {
@@ -90,55 +94,25 @@ export default class Dashboard extends React.PureComponent {
   setOpenDoor = async openDoorModal => {
     if (openDoorModal) {
       const { currentAdmin } = this.props
-      await openDoorService(currentAdmin.cardId); 
+      await openDoorService(currentAdmin.cardId);
     }
-    
+
     this.setState({ openDoorModal })
   }
 
-  handleSearch = async( user ) => {
-    //console.log(this.refs.search.value);
+  handleChangeSearch = event => {
+    const { value } = event.target
     const { users } = this.state
-    if (users.filter(u => u.cardId === this.refs.search.value).length > 0){
-      this.setState({ users: users.filter(u => u.cardId === this.refs.search.value) })
-    }
-    else 
-    {
-      this.setState({ users: users.filter(u => u.name === this.refs.search.value) })
-    }
-    // if (this.refs.search.value == '')
-    // {
-    //   const token = localStorage.getItem('token')
-    //   const data = await UserService.getAllUsers(token)
-    //   this.setState({ users: data.body, loading: false })
-    //   //console.log(data)
-    // }
-    // else 
-    // {
-    //   //console.log(users)
-    //   if (users.filter(u => u.cardId == this.refs.search.value).length > 0){
-    //     this.setState({ users: users.filter(u => u.cardId == this.refs.search.value) })
-    //   }
-    //   else 
-    //   {
-    //     this.setState({ users: users.filter(u => u.name == this.refs.search.value) })
-    //   }
-    //   //if (users.filter(u => u.name == this.refs.search.value).length > 0)
-    // }
-  }
-  handleChangeSearch = async(event) => {
-    //console.log(event.target.value)
-    const SearchValue = event.target.value
-    if (SearchValue === '')
-    {
-      const token = localStorage.getItem('token')
-      const data = await UserService.getAllUsers(token)
-      this.setState({ users: data.body, loading: false })
+
+    if (!value) {
+      this.setState({ filteringUsers: users })
+    } else {
+      this.setState({ filteringUsers: users.filter(u => u.username.toLowerCase().indexOf(value.toLowerCase()) !== -1) })
     }
   }
 
   handlePickDate = (start, end) => {
-    const { activities, startDate, endDate} = this.state
+    const { activities, startDate, endDate } = this.state
 
     if (start)
       this.setState({ startDate: start })
@@ -146,27 +120,29 @@ export default class Dashboard extends React.PureComponent {
       this.setState({ endDate: end })
 
     if ((startDate && end) || (start && endDate) || (startDate && endDate)) {
-      this.setState({ filteringActivities: activities.filter(a =>  {
+      this.setState({
+        filteringActivities: activities.filter(a => {
 
-        const sd = moment(start ?  start : startDate).unix()
-        const ad = moment(new Date(a.unclock_date).toDateString()).unix()
-        const ed = moment(end ? end : endDate).unix()
+          const sd = moment(start ? start : startDate).unix()
+          const ad = moment(new Date(a.unclock_date).toDateString()).unix()
+          const ed = moment(end ? end : endDate).unix()
 
-        return ad >= sd && ad <=ed
-      })})
+          return ad >= sd && ad <= ed
+        })
+      })
     }
   }
 
   handleResetDateRange = () => {
     const { activities } = this.state
-  
+
     this.setState({ startDate: null, endDate: null, filteringActivities: activities })
   }
 
 
   render() {
     const { currentAdmin } = this.props
-    const { users, loading, showCreateUserModal, preUserEditable, showSingleActivityModal, activityUser, openDoorModal, startDate, endDate, filteringActivities } = this.state
+    const { filteringUsers, loading, showCreateUserModal, preUserEditable, showSingleActivityModal, activityUser, openDoorModal, startDate, endDate, filteringActivities } = this.state
 
     return (
       <div className="container">
@@ -174,11 +150,8 @@ export default class Dashboard extends React.PureComponent {
           <Tabs type="card" tabPosition="left">
             <TabPane tab="Users" key="1">
               <Button type="primary" onClick={() => this.showModal(true)}>Thêm user</Button>
-              <input  onChange={this.handleChangeSearch} type="text" className="search" ref="search" placeholder="Tìm theo Card ID hoặc tên người dùng" style={{ width: "400px", marginLeft: '2.8rem', marginRight: '0.2rem' }} />
-              <span className="input-group-btn"> 
-              <button onClick={this.handleSearch}  className="btn btn-info" type="button">Search</button>
-          </span>
-              {!loading && <User users={users} onEditUser={this.onEditUser} onRemoveUser={this.handleRemoveUser} currentAdmin={currentAdmin} setTargetActivityUser={this.showActivityUser} />}
+              <Input onChange={this.handleChangeSearch} type="text" className="search" ref="search" placeholder="Tìm theo tên người dùng" style={{ width: 400, marginLeft: '2.8rem', marginRight: '0.2rem' }} />
+              {!loading && <User users={filteringUsers} onEditUser={this.onEditUser} onRemoveUser={this.handleRemoveUser} currentAdmin={currentAdmin} setTargetActivityUser={this.showActivityUser} />}
             </TabPane>
             <TabPane tab="Nhật kí mở cửa" key="2">
               {/* <DateRangeChoose activities = {activities}/> */}

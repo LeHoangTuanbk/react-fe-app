@@ -17,3 +17,7 @@ code {
   padding: 20px 20px 0px 10px;
   box-shadow: 0px 6px 5px 0px rgba(232,220,232,1);
 }
+
+.react-datepicker__input-container button {
+  display: none;
+}

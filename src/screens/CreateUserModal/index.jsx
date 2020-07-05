@@ -88,7 +88,7 @@ class CreateUserModal extends React.PureComponent {
 
       this.props.onFinish()
     } catch (error) {
-      const errorObj = handleServerError(error && error.response && error.response.body.code | undefined)
+      const errorObj = handleServerError(error && error.response && error.response.body.code ? error.response.body.code : undefined)
       if (errorObj && this.formRef && this.formRef.current) {
         this.formRef.current.setFields([{
           name: errorObj.field,

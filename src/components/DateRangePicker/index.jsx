@@ -5,7 +5,7 @@ export default class DateRangePicker extends Component {
   render() {
     const { startDate, endDate, handlePickDate, onResetDateRange } = this.props
     return (
-      <div>
+      <div style={{ display: 'flex' }}>
         <DatePicker
           selected={startDate}
           onChange={date => handlePickDate(date, null)}
@@ -27,7 +27,6 @@ export default class DateRangePicker extends Component {
             <button onClick={onResetDateRange} className="btn btn-info" type="button" style={{ marginRight: '2.2rem' }}>Reset</button>
         </span>
       </div>
-
     );
   }
 
