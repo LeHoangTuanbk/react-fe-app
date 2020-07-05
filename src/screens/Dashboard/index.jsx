@@ -1,5 +1,6 @@
 import React from 'react'
 import { Tabs, Button } from 'antd';
+import moment from 'moment';
 
 import UserService from 'services/user'
 import ActivityService from 'services/activity'
@@ -8,13 +9,13 @@ import openDoorService from 'services/openDoor'
 
 import User from 'components/User';
 import Activity from 'components/Activity';
-import DateRangeChoose from 'components/DateRangeChoose';
 import CreateUserModal from 'screens/CreateUserModal';
 import SingleUserActivity from 'screens/SingleUserActivity';
 import OpenDoorModal from 'screens/OpenDoorModal';
 import user from 'services/user';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
+import DateRangePicker from 'components/DateRangePicker';
 
 
 const { TabPane } = Tabs;
@@ -31,7 +32,8 @@ export default class Dashboard extends React.PureComponent {
     openDoorModal: false,
     findUsers: [],
     startDate: null,
-    endDate: null
+    endDate: null,
+    filteringActivities: []
   }
 
   showModal = visiable => {
@@ -46,7 +48,7 @@ export default class Dashboard extends React.PureComponent {
 
     const data = await UserService.getAllUsers(token)
     const activityData = await ActivityService.getAllActivity()
-    this.setState({ users: data.body,findUsers: data.body, loading: false, activities: activityData.body })
+    this.setState({ users: data.body,findUsers: data.body, loading: false, activities: activityData.body, filteringActivities: activityData.body })
   }
 
   addNewUserToList = user => {
@@ -135,27 +137,36 @@ export default class Dashboard extends React.PureComponent {
     }
   }
 
-  handleChangeStart = date => {
-    this.setState({
-      startDate: date
-    });
+  handlePickDate = (start, end) => {
+    const { activities, startDate, endDate} = this.state
+
+    if (start)
+      this.setState({ startDate: start })
+    if (end)
+      this.setState({ endDate: end })
+
+    if ((startDate && end) || (start && endDate) || (startDate && endDate)) {
+      this.setState({ filteringActivities: activities.filter(a =>  {
+
+        const sd = moment(start ?  start : startDate).unix()
+        const ad = moment(new Date(a.unclock_date).toDateString()).unix()
+        const ed = moment(end ? end : endDate).unix()
+
+        return ad >= sd && ad <=ed
+      })})
+    }
   }
-  handleChangeEnd = date => {
-    this.setState({ 
-      endDate: date
-    });
-  }
-  handleSearchActivities = async (activities) => {
-    const { Activities } = this.state
-    const { startDate, endDate,  } = this.state
-    const { Activities } = this.state
-    // console.log(Activities.)
+
+  handleResetDateRange = () => {
+    const { activities } = this.state
+  
+    this.setState({ startDate: null, endDate: null, filteringActivities: activities })
   }
 
 
   render() {
     const { currentAdmin } = this.props
-    const { users, loading, showCreateUserModal, preUserEditable, activities, showSingleActivityModal, activityUser, openDoorModal } = this.state
+    const { users, loading, showCreateUserModal, preUserEditable, showSingleActivityModal, activityUser, openDoorModal, startDate, endDate, filteringActivities } = this.state
 
     return (
       <div className="container">
@@ -172,34 +183,11 @@ export default class Dashboard extends React.PureComponent {
             <TabPane tab="Nhật kí mở cửa" key="2">
               {/* <DateRangeChoose activities = {activities}/> */}
               <div>
-                <span className="input-group-btn"> 
-                    <button onClick={ () => this.handleSearchActivities(activities)} className="btn btn-info" type="button" style={{ marginRight: '2.2rem' }}>Tìm Activities theo ngày</button>
-                </span>
-                <div>
-                <DatePicker
-                selected={this.state.startDate}
-                onChange={this.handleChangeStart}
-                dateFormat='dd/MM/yyyy'
-                isClearable
-                placeholderText="Ngày bắt đầu"
-                style={{ marginRight: '2.2rem' }}
-                openToDate={new Date()}
-                />
-                </div>
-                <div>
-                <DatePicker
-                selected={this.state.endDate}
-                onChange={this.handleChangeEnd}
-                dateFormat='dd/MM/yyyy'
-                isClearable
-                placeholderText="Ngày kết thúc"
-                minDate={this.state.startDate}
-                />
-                </div>
+                <DateRangePicker startDate={startDate} endDate={endDate} handlePickDate={this.handlePickDate} onResetDateRange={this.handleResetDateRange} />
               </div>
 
 
-              <Activity activities={activities.map(v => ({ ...v, cardId: v.User.cardId, username: v.User.username }))} />
+              <Activity activities={filteringActivities.map(v => ({ ...v, cardId: v.User.cardId, username: v.User.username }))} />
             </TabPane>
             <TabPane tab="Mở khóa cửa nhà từ website" key="3" >
               <OpenDoorModal openDoorModal={openDoorModal} setOpenDoor={this.setOpenDoor} />
