@@ -22,4 +22,9 @@ const deactiveUser = (cardId) => {
   return superagent.delete('/user/' + cardId + '/deactive').set('Bearer', token)
 }
 
-export default { getAllUsers, addNewUser, editUser, deleteUser, deactiveUser }
+const findUsers = (cardId) => {
+  const token = localStorage.getItem('token')
+  return superagent.get('/user/' + cardId).set('Bearer', token)
+}
+
+export default { getAllUsers, addNewUser, editUser, deleteUser, deactiveUser,findUsers }

@@ -54,9 +54,6 @@ class DatePickerClock extends Component {
         minDate={this.state.startDate}
         />
         </div>
-        
-        
-        
       </div>
       
     );

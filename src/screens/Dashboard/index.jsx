@@ -13,6 +13,9 @@ import CreateUserModal from 'screens/CreateUserModal';
 import SingleUserActivity from 'screens/SingleUserActivity';
 import OpenDoorModal from 'screens/OpenDoorModal';
 import user from 'services/user';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css'
+
 
 const { TabPane } = Tabs;
 
@@ -26,7 +29,9 @@ export default class Dashboard extends React.PureComponent {
     showSingleActivityModal: false,
     activityUser: [],
     openDoorModal: false,
-    findUsers: []
+    findUsers: [],
+    startDate: null,
+    endDate: null
   }
 
   showModal = visiable => {
@@ -129,6 +134,25 @@ export default class Dashboard extends React.PureComponent {
       this.setState({ users: data.body, loading: false })
     }
   }
+
+  handleChangeStart = date => {
+    this.setState({
+      startDate: date
+    });
+  }
+  handleChangeEnd = date => {
+    this.setState({ 
+      endDate: date
+    });
+  }
+  handleSearchActivities = async (activities) => {
+    const { Activities } = this.state
+    const { startDate, endDate,  } = this.state
+    const { Activities } = this.state
+    // console.log(Activities.)
+  }
+
+
   render() {
     const { currentAdmin } = this.props
     const { users, loading, showCreateUserModal, preUserEditable, activities, showSingleActivityModal, activityUser, openDoorModal } = this.state
@@ -146,7 +170,35 @@ export default class Dashboard extends React.PureComponent {
               {!loading && <User users={users} onEditUser={this.onEditUser} onRemoveUser={this.handleRemoveUser} currentAdmin={currentAdmin} setTargetActivityUser={this.showActivityUser} />}
             </TabPane>
             <TabPane tab="Nhật kí mở cửa" key="2">
-              <DateRangeChoose activities = {activities}/>
+              {/* <DateRangeChoose activities = {activities}/> */}
+              <div>
+                <span className="input-group-btn"> 
+                    <button onClick={ () => this.handleSearchActivities(activities)} className="btn btn-info" type="button" style={{ marginRight: '2.2rem' }}>Tìm Activities theo ngày</button>
+                </span>
+                <div>
+                <DatePicker
+                selected={this.state.startDate}
+                onChange={this.handleChangeStart}
+                dateFormat='dd/MM/yyyy'
+                isClearable
+                placeholderText="Ngày bắt đầu"
+                style={{ marginRight: '2.2rem' }}
+                openToDate={new Date()}
+                />
+                </div>
+                <div>
+                <DatePicker
+                selected={this.state.endDate}
+                onChange={this.handleChangeEnd}
+                dateFormat='dd/MM/yyyy'
+                isClearable
+                placeholderText="Ngày kết thúc"
+                minDate={this.state.startDate}
+                />
+                </div>
+              </div>
+
+
               <Activity activities={activities.map(v => ({ ...v, cardId: v.User.cardId, username: v.User.username }))} />
             </TabPane>
             <TabPane tab="Mở khóa cửa nhà từ website" key="3" >
