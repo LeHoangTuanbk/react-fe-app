@@ -1,5 +1,5 @@
 import React from 'react'
-import { Space, Table } from 'antd'
+import { Table } from 'antd'
 import formatDateTime from 'utils/formatDateTime'
 import moment from 'moment';
 

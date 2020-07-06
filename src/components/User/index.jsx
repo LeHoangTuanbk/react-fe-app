@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Space, Spin } from 'antd'
+import { Table, Space } from 'antd'
 
 import UserService from 'services/user'
 
@@ -14,8 +14,7 @@ export default class User extends React.PureComponent {
           window.alert('Bạn không thể xóa chính bản thân bạn!')
           return;
         }
-
-        await UserService.deactiveUser(user.cardId)
+        await UserService.deleteUser(user.cardId)
         this.props.onRemoveUser(user)
       }
     } catch (error) {

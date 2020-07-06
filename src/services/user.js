@@ -12,7 +12,8 @@ const editUser = (token, cardId, user) => {
   return superagent.put('/user/' + cardId).set('Bearer', token).send(user)
 }
 
-const deleteUser = (token, cardId) => {
+const deleteUser = (cardId) => {
+  const token = localStorage.getItem('token')
   return superagent.delete('/user/' + cardId).set('Bearer', token)
 }
 
